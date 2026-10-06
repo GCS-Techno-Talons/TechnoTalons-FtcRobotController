@@ -148,15 +148,6 @@ public class Primary extends LinearOpMode {
             flyWheel.setPower(flyWheelActive?flyWheelSpeed:0);
 
 
-            // flicker
-            if (gamepad2.dpad_up) {
-                flicker.setPosition(servoMax);
-
-            } else {
-                flicker.setPosition(servoMin);
-            }
-
-
             // slow mode for drive
             if (gamepad2.x) {
                 if (!xPressed) {
