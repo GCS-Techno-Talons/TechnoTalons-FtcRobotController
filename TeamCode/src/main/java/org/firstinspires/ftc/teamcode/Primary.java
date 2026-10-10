@@ -101,13 +101,13 @@ public class Primary extends OpMode {
          * to 'get' must correspond to the names assigned during the robot configuration
          * step.
          */
-        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftDrive = hardwareMap.get(DcMotor.class, "back-left");
+        rightDrive = hardwareMap.get(DcMotor.class, "back-right");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        launcher = hardwareMap.get(DcMotorEx.class, "launcher");
+        launcher = hardwareMap.get(DcMotorEx.class, "flywheel");
         windmillServo = hardwareMap.get(CRServo.class, "windmill");
-        leftIntakeServo = hardwareMap.get(CRServo.class, "left_intake_servo");
-        rightIntakeServo = hardwareMap.get(CRServo.class, "right_intake_servo");
+        leftIntakeServo = hardwareMap.get(CRServo.class, "servo-front-left");
+        rightIntakeServo = hardwareMap.get(CRServo.class, "servo-front-right");
 
         /*
          * To drive forward, most robots need the motor on one side to be reversed,
@@ -201,9 +201,9 @@ public class Primary extends OpMode {
          * allow us to avoid setting the same motors/servos power more than once per loop. That can
          * create erratic behavior.
          */
-//        intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
-        controller.addTrigger(() ->  gamepad1.right_trigger, 0.5)
-                .onToggle(() -> intakePower = 1, () -> intakePower = 0);
+        intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
+//        controller.addTrigger(() ->  gamepad1.right_trigger, 0.5)
+//                .onToggle(() -> intakePower = 1, () -> intakePower = 0);
         /*
          * The launch() function handles setting motor velocity, and running the windmill servo
          * to feed the elements into the launcher wheel.
@@ -262,9 +262,9 @@ public class Primary extends OpMode {
             launcher.setVelocity(0);
         }
 
-        controller.addTrigger(()->gamepad1.right_bumper)
-                .onToggle(() -> launcher.setVelocity(LAUNCHER_TARGET_VELOCITY),
-                        () -> launcher.setVelocity((0)));
+//        controller.addTrigger(()->gamepad1.right_bumper)
+//                .onToggle(() -> launcher.setVelocity(LAUNCHER_TARGET_VELOCITY),
+//                        () -> launcher.setVelocity((0)));
 
         /*
          * Here we ask if the driver is currently pressing the right bumper, AND the launcher is
