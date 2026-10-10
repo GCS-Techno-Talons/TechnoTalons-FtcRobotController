@@ -7,12 +7,23 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+/**
+ * Controller class for using basic types of triggers. Here are some examples:
+ * <p>
+ * To toggle x when button A is pressed:
+ * <pre>{@code
+ * controller.addTrigger(()->gamepad1.a)<br>
+ *      .onToggle(() -> x = !x);
+ * }</pre>
+ * To run launch() when right trigger is held down past 0.5 threshold:
+ *<pre>{@code
+ * controller.addTrigger(() -> gamepad1.right_trigger, 0.5)
+ *      .onRisingEdge(this::launch);
+ * }</pre>
+ */
 public class Controller {
-    // all triggers
     private final List<Trigger> triggers = new ArrayList<>();
 
-    // add a new trigger via
-    // controller.add(new Trigger(gamepad1.a).onRisingEdge(this::foo));
     private Trigger add(Trigger trigger) {
         triggers.add(trigger);
         return trigger;
@@ -26,10 +37,9 @@ public class Controller {
         return add(new Trigger(input, threshold));
     }
 
-    // check all triggers
     public void update() {
-        for (Trigger t : triggers) {
-            t.update();
+        for (int i = 0; i < triggers.size(); i++) {
+            triggers.get(i).update();
         }
     }
 }
