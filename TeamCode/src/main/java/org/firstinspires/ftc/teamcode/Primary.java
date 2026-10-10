@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.teamcode.utilities.Controller;
 
-import java.util.function.DoubleSupplier;
 
 /*
  * This file includes a teleop (driver-controlled) file for the goBILDA® StarterBot for the
@@ -201,9 +200,11 @@ public class Primary extends OpMode {
          * allow us to avoid setting the same motors/servos power more than once per loop. That can
          * create erratic behavior.
          */
-        intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
-//        controller.addTrigger(() ->  gamepad1.right_trigger, 0.5)
-//                .onToggle(() -> intakePower = 1, () -> intakePower = 0);
+//        intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
+
+        // intake on toggle
+        controller.addTrigger(() ->  gamepad1.right_trigger, 0.5)
+                .onToggle(() -> intakePower = 1, () -> intakePower = 0);
         /*
          * The launch() function handles setting motor velocity, and running the windmill servo
          * to feed the elements into the launcher wheel.
@@ -256,15 +257,17 @@ public class Primary extends OpMode {
          * holding down the right gamepad. If they are, then we want to start spinning up the launcher.
          * Otherwise, we start spinning the launcher down.
          */
-        if (gamepad1.right_bumper) {
-            launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
-        } else {
-            launcher.setVelocity(0);
-        }
 
-//        controller.addTrigger(()->gamepad1.right_bumper)
-//                .onToggle(() -> launcher.setVelocity(LAUNCHER_TARGET_VELOCITY),
-//                        () -> launcher.setVelocity((0)));
+//        if (gamepad1.right_bumper) {
+//            launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
+//        } else {
+//            launcher.setVelocity(0);
+//        }
+
+        // flywheel on toggle
+        controller.addTrigger(()->gamepad1.right_bumper)
+                .onToggle(() -> launcher.setVelocity(LAUNCHER_TARGET_VELOCITY),
+                        () -> launcher.setVelocity((0)));
 
         /*
          * Here we ask if the driver is currently pressing the right bumper, AND the launcher is
