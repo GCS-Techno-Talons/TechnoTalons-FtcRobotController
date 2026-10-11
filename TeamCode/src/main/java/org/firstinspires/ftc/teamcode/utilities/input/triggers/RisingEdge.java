@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utilities.triggers;
+package org.firstinspires.ftc.teamcode.utilities.input.triggers;
 
 // on rising edge is the instant when it goes from false to true
 public class RisingEdge implements TriggerBehavior {

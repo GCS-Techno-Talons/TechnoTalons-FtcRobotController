@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utilities.triggers;
+package org.firstinspires.ftc.teamcode.utilities.input.triggers;
 
 // toggle alternates between two actions depending on the state,
 // so press do A, press again do B, repeat

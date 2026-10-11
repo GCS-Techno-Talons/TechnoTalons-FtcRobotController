@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utilities.triggers;
+package org.firstinspires.ftc.teamcode.utilities.input.triggers;
 
 // on falling edge is the instant when a button goes from pressed to released (false -> true)
 public class FallingEdge implements TriggerBehavior {
