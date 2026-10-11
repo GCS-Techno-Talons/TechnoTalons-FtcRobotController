@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utilities.triggers;
+package org.firstinspires.ftc.teamcode.utilities.input.triggers;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utilities.triggers;
+package org.firstinspires.ftc.teamcode.utilities.input.triggers;
 
 // Held for when its held, duh. (and also a method for whileReleased)
 public class Held implements TriggerBehavior {

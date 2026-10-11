@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.utilities;
+package org.firstinspires.ftc.teamcode.utilities.input;
 
-import org.firstinspires.ftc.teamcode.utilities.triggers.Trigger;
+import org.firstinspires.ftc.teamcode.utilities.input.triggers.Trigger;
 
 import java.util.ArrayList;
 import java.util.List;
