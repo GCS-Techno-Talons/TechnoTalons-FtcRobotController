@@ -190,6 +190,8 @@ public class StarterBotBasic extends OpMode {
             intakePower = -1;
         } else if (gamepad1.left_trigger > 0.5){
             intakePower = 1;
+        } else {
+            intakePower = 0;
         }
 
         /*
