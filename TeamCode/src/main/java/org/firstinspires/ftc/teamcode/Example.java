@@ -32,7 +32,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.firstinspires.ftc.teamcode.utilities.input.Controller;
 
 
 /*
@@ -52,7 +51,7 @@ import org.firstinspires.ftc.teamcode.utilities.input.Controller;
 
 @TeleOp(name = "StarterBot Example Teleop", group = "StarterBot")
 //@Disabled
-public class StarterBotBasic extends OpMode {
+public class Example extends OpMode {
 
     // Declare OpMode members.
     private DcMotor leftDrive = null;

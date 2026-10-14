@@ -42,11 +42,13 @@ public class Primary extends OpMode {
     // Declare OpMode members.
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
-    private DcMotorEx launcher = null;
+    private DcMotorEx flywheel = null;
     private DcMotor intake = null;
     private CRServo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
+
+    private final double RIGHT_SIDE_MULTIPLIER = 0.8;
 
 
     private final Controller controller = new Controller();
@@ -60,8 +62,8 @@ public class Primary extends OpMode {
      * in the launch() function to only run the windmill servo when the motor is spinning fast
      * enough to make a successful throw.
      */
-    public final int LAUNCHER_TARGET_VELOCITY = 1250;
-    public final int LAUNCHER_MIN_VELOCITY = 1200;
+    public final int FLYWHEEL_TARGET_VELOCITY = 1250;
+    public final int FLYWHEEL_MIN_VELOCITY = 1200;
 
     /*
      * These two variables store the power we need to apply to the motors. In other cases, we may
@@ -88,7 +90,7 @@ public class Primary extends OpMode {
         leftDrive = hardwareMap.get(DcMotor.class, "back-left");
         rightDrive = hardwareMap.get(DcMotor.class, "back-right");
         intake = hardwareMap.get(DcMotor.class, "intake");
-        launcher = hardwareMap.get(DcMotorEx.class, "flywheel");
+        flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
         windmillServo = hardwareMap.get(CRServo.class, "windmill");
         leftIntakeServo = hardwareMap.get(CRServo.class, "servo-front-left");
         rightIntakeServo = hardwareMap.get(CRServo.class, "servo-front-right");
@@ -119,9 +121,9 @@ public class Primary extends OpMode {
          * into the port right beside the motor itself. And that the motors polarity is consistent
          * through any wiring.
          */
-        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        launcher.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(40, 0, 0, 12.5));
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(40, 0, 0, 12.5));
 
         /*
          * set Feeders to an initial value to initialize the servo controller
@@ -136,6 +138,8 @@ public class Primary extends OpMode {
          */
         rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
         windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        addControllerTriggers();
 
         /*
          * Tell the driver that initialization is complete.
@@ -160,26 +164,25 @@ public class Primary extends OpMode {
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
+
+    private void addControllerTriggers () {
+        // intake on toggle
+        controller.addTrigger(() ->  gamepad1.left_trigger, 0.5)
+                .onToggle(() -> intakePower = -1, () -> intakePower = 0);
+        controller.addTrigger(() ->  gamepad1.right_trigger, 0.5)
+                .onToggle(() -> intakePower = 1, () -> intakePower = 0);
+
+        controller.addTrigger(()->gamepad1.right_bumper)
+                .onToggle(() -> flywheel.setVelocity(FLYWHEEL_TARGET_VELOCITY),
+                        () -> flywheel.setVelocity(0));
+    }
+
     @Override
     public void loop() {
         arcadeDrive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
+        controller.update();
 
-        // intake on toggle
-        controller.addTrigger(() ->  gamepad1.right_trigger, 0.5)
-                .onToggle(() -> intakePower = 1, () -> intakePower = 0);
-        /*
-         * The launch() function handles setting motor velocity, and running the windmill servo
-         * to feed the elements into the launcher wheel.
-         */
-        launch();
-
-        /*
-         * Here we set our intake motor and servos to their intake power. The order of operations
-         * here is important though. The gamepad triggers define the starting point for the intake
-         * power variable in each loop of our code, but inside our launch function we also sometimes
-         * change the intake power. So we need to give our launch function a chance to modify the
-         * variable before we write it to our motor and servos.
-         */
+        windmillServo.setPower(gamepad1.dpad_down? 1:0);
         intake.setPower(intakePower);
         leftIntakeServo.setPower(intakePower);
         rightIntakeServo.setPower(intakePower);
@@ -189,7 +192,6 @@ public class Primary extends OpMode {
          */
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
         telemetry.addLine();
-
     }
 
     /*
@@ -201,7 +203,7 @@ public class Primary extends OpMode {
 
     void arcadeDrive(double forward, double rotate) {
         leftPower = forward + rotate;
-        rightPower = forward - rotate;
+        rightPower = RIGHT_SIDE_MULTIPLIER * (forward - rotate);
 
         /*
          * Send calculated power to motors
@@ -209,15 +211,5 @@ public class Primary extends OpMode {
         leftDrive.setPower(leftPower);
         rightDrive.setPower(rightPower);
     }
-
-    void launch() {
-        // flywheel on toggle
-        controller.addTrigger(()->gamepad1.right_bumper)
-                .onToggle(() -> launcher.setVelocity(LAUNCHER_TARGET_VELOCITY),
-                        () -> launcher.setVelocity((0)));
-
-        windmillServo.setPower(gamepad1.dpad_down? 1:0);
-    }
-
 
 }
