@@ -25,6 +25,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -32,8 +34,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.firstinspires.ftc.teamcode.utilities.input.Controller;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.utilities.input.Controller;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @TeleOp(name = "StarterBot Primary Teleop", group = "StarterBot")
 //@Disabled
@@ -81,6 +88,48 @@ public class Primary extends OpMode {
      */
     @Override
     public void init() {
+
+        /* April tag initialization */
+        AprilTagProcessor.Builder myAprilTagProcessorBuilder;
+        AprilTagProcessor myAprilTagProcessor;
+        AprilTagLibrary myAprilTagLibrary = AprilTagGameDatabase.getCurrentGameTagLibrary();
+
+        // Create a new AprilTag Processor Builder object.
+        myAprilTagProcessorBuilder = new AprilTagProcessor.Builder();
+
+        // Optional: specify a custom Library of AprilTags.
+        myAprilTagProcessorBuilder.setTagLibrary(myAprilTagLibrary);   // The OpMode must have already created a Library.
+
+        // Optional: set other custom features of the AprilTag Processor (4 are shown here).
+        myAprilTagProcessorBuilder.setDrawTagID(true);       // Default: true, for all detections.
+        myAprilTagProcessorBuilder.setDrawTagOutline(true);  // Default: true, when tag size was provided (thus eligible for pose estimation).
+        myAprilTagProcessorBuilder.setDrawAxes(true);        // Default: false.
+        myAprilTagProcessorBuilder.setDrawCubeProjection(true);        // Default: false.
+
+        // Create an AprilTagProcessor by calling build()
+        myAprilTagProcessor = myAprilTagProcessorBuilder.build();
+
+        /* VisionPortal Initialization */
+        VisionPortal.Builder myVisionPortalBuilder;
+        VisionPortal myVisionPortal;
+
+        // Create a new VisionPortal Builder object.
+        myVisionPortalBuilder = new VisionPortal.Builder();
+
+        // Specify the camera to be used for this VisionPortal.
+        myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "Logitech C270 Webcam"));      // Other choices are: RC phone camera and "switchable camera name".
+
+        // Add the AprilTag Processor to the VisionPortal Builder.
+        myVisionPortalBuilder.addProcessor(myAprilTagProcessor);       // An added Processor is enabled by default.
+
+        // Optional: set other custom features of the VisionPortal (4 are shown here).
+        myVisionPortalBuilder.setCameraResolution(new Size(640, 480));  // Each resolution, for each camera model, needs calibration values for good pose estimation.
+        myVisionPortalBuilder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);  // MJPEG format uses less bandwidth than the default YUY2.
+        myVisionPortalBuilder.enableLiveView(true);      // Enable LiveView (RC preview).
+        myVisionPortalBuilder.setAutoStopLiveView(true);     // Automatically stop LiveView (RC preview) when all vision processors are disabled.
+
+        // Create a VisionPortal by calling build()
+        myVisionPortal = myVisionPortalBuilder.build();
 
         /*
          * Initialize the hardware variables. Note that the strings used here as parameters
