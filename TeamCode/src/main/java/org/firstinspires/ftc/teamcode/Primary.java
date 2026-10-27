@@ -38,9 +38,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utilities.input.Controller;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.apriltag.*;
+
+import java.util.List;
 
 @TeleOp(name = "StarterBot Primary Teleop", group = "StarterBot")
 //@Disabled
@@ -54,7 +54,7 @@ public class Primary extends OpMode {
     private CRServo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
-
+    private AprilTagProcessor myAprilTagProcessor;
     private final double RIGHT_SIDE_MULTIPLIER = 0.8;
 
 
@@ -89,9 +89,10 @@ public class Primary extends OpMode {
     @Override
     public void init() {
 
-        /* April tag initialization */
+        /*
+         * April tag initialization
+         */
         AprilTagProcessor.Builder myAprilTagProcessorBuilder;
-        AprilTagProcessor myAprilTagProcessor;
         AprilTagLibrary myAprilTagLibrary = AprilTagGameDatabase.getCurrentGameTagLibrary();
 
         // Create a new AprilTag Processor Builder object.
@@ -109,7 +110,9 @@ public class Primary extends OpMode {
         // Create an AprilTagProcessor by calling build()
         myAprilTagProcessor = myAprilTagProcessorBuilder.build();
 
-        /* VisionPortal Initialization */
+        /*
+         * VisionPortal Initialization
+         */
         VisionPortal.Builder myVisionPortalBuilder;
         VisionPortal myVisionPortal;
 
@@ -241,6 +244,25 @@ public class Primary extends OpMode {
          */
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
         telemetry.addLine();
+
+        /*
+         * Read AprilTag and do something with it
+         */
+        List<AprilTagDetection> myAprilTagDetections;  // list of all detections
+        int myAprilTagIdCode;                           // ID code of current detection, in for() loop
+
+        // Get a list of AprilTag detections.
+        myAprilTagDetections = myAprilTagProcessor.getDetections();
+
+        // Cycle through the list and process each AprilTag.
+        for (AprilTagDetection myAprilTagDetection : myAprilTagDetections) {
+            // Read the ID of detection
+            AprilTagDetection mySingleDetection = myAprilTagDetection;
+
+            myAprilTagIdCode = mySingleDetection.id;   // No non-null Metadata check needed for reading only ID code.
+
+            // TODO: take action based on this tag's ID code, or store info for later action.
+        }
     }
 
     /*
