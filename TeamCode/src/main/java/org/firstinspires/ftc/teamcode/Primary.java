@@ -42,7 +42,7 @@ import org.firstinspires.ftc.vision.apriltag.*;
 
 import java.util.List;
 
-@TeleOp(name = "StarterBot Primary Teleop", group = "StarterBot")
+@TeleOp(name = "(April Tag) StarterBot Primary Teleop", group = "StarterBot")
 //@Disabled
 public class Primary extends OpMode {
 
@@ -227,6 +227,9 @@ public class Primary extends OpMode {
         controller.addTrigger(()->gamepad1.right_bumper)
                 .onToggle(() -> flywheel.setVelocity(FLYWHEEL_TARGET_VELOCITY),
                         () -> flywheel.setVelocity(0));
+
+        controller.addTrigger(() -> gamepad1.dpad_left)
+                .onToggle(() -> autoAim(100));
     }
 
     @Override
@@ -248,20 +251,15 @@ public class Primary extends OpMode {
         /*
          * Read AprilTag and do something with it
          */
-        List<AprilTagDetection> myAprilTagDetections;  // list of all detections
+        List<AprilTagDetection> myAprilTagDetections = myAprilTagProcessor.getDetections();  // list of all detections
         int myAprilTagIdCode;                           // ID code of current detection, in for() loop
-
-        // Get a list of AprilTag detections.
-        myAprilTagDetections = myAprilTagProcessor.getDetections();
 
         // Cycle through the list and process each AprilTag.
         for (AprilTagDetection myAprilTagDetection : myAprilTagDetections) {
             // Read the ID of detection
-            AprilTagDetection mySingleDetection = myAprilTagDetection;
+            myAprilTagIdCode = myAprilTagDetection.id;   // No non-null Metadata check needed for reading only ID code.
 
-            myAprilTagIdCode = mySingleDetection.id;   // No non-null Metadata check needed for reading only ID code.
-
-            // TODO: take action based on this tag's ID code, or store info for later action.
+            telemetry.addLine("AprilTag ID: " + myAprilTagIdCode);
         }
     }
 
@@ -281,6 +279,13 @@ public class Primary extends OpMode {
          */
         leftDrive.setPower(leftPower);
         rightDrive.setPower(rightPower);
+    }
+
+    void autoAim(double speed) {
+        while (myAprilTagProcessor.getDetections() == null) {
+            leftDrive.setPower(speed);
+            rightDrive.setPower(0);
+        }
     }
 
 }
