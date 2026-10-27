@@ -248,6 +248,8 @@ public class Example extends OpMode {
          * Otherwise, we start spinning the launcher down.
          */
 
+        // test
+
         if (gamepad1.right_bumper) {
             launcher.setVelocity(LAUNCHER_TARGET_VELOCITY);
         } else {
