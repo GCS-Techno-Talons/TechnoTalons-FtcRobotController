@@ -43,12 +43,13 @@ public class Primary extends OpMode {
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
     private DcMotorEx flywheel = null;
+    private final double FLYWHEEL_MULTIPLIER = 0.25;
     private DcMotor intake = null;
     private CRServo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
 
-    private final double RIGHT_SIDE_MULTIPLIER = 0.7;
+    private final double RIGHT_SIDE_MULTIPLIER = 0.5;
 
 
     private final Controller controller = new Controller();
@@ -75,6 +76,7 @@ public class Primary extends OpMode {
 
     // Create a variable to set to the intake.
     double intakePower;
+    private final double INTAKE_MULTIPLIER = 0.75;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -168,13 +170,13 @@ public class Primary extends OpMode {
     private void addControllerTriggers () {
         // intake on toggle
         controller.addTrigger(() ->  gamepad1.left_trigger, 0.5)
-                .onToggle(() -> intakePower = -1, () -> intakePower = 0);
+                .onToggle(() -> intakePower = -1 * INTAKE_MULTIPLIER, () -> intakePower = 0);
         controller.addTrigger(() ->  gamepad1.right_trigger, 0.5)
-                .onToggle(() -> intakePower = 1, () -> intakePower = 0);
+                .onToggle(() -> intakePower = INTAKE_MULTIPLIER, () -> intakePower = 0);
 
         controller.addTrigger(()->gamepad1.right_bumper)
-                .onToggle(() -> flywheel.setVelocity(FLYWHEEL_TARGET_VELOCITY),
-                        () -> flywheel.setVelocity(0));
+                .onToggle(() -> flywheel.setPower(FLYWHEEL_MULTIPLIER),
+                        () -> flywheel.setPower(0));
     }
 
     @Override
