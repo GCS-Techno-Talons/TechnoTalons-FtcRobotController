@@ -48,7 +48,7 @@ public class Primary extends OpMode {
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
 
-    private final double RIGHT_SIDE_MULTIPLIER = 0.8;
+    private final double RIGHT_SIDE_MULTIPLIER = 0.7;
 
 
     private final Controller controller = new Controller();
