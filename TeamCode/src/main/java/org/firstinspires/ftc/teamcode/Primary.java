@@ -227,20 +227,21 @@ public class Primary extends OpMode {
         controller.addTrigger(()->gamepad1.right_bumper)
                 .onToggle(() -> flywheel.setVelocity(FLYWHEEL_TARGET_VELOCITY),
                         () -> flywheel.setVelocity(0));
-
-        controller.addTrigger(() -> gamepad1.dpad_left)
-                .onToggle(() -> autoAim(100));
     }
 
     @Override
     public void loop() {
-        arcadeDrive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
-        controller.update();
+        if (gamepad1.dpad_left) {
+            autoAim(1);
+        } else{
+            arcadeDrive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
+            controller.update();
 
-        windmillServo.setPower(gamepad1.dpad_down? 1:0);
-        intake.setPower(intakePower);
-        leftIntakeServo.setPower(intakePower);
-        rightIntakeServo.setPower(intakePower);
+            windmillServo.setPower(gamepad1.dpad_down? 1:0);
+            intake.setPower(intakePower);
+            leftIntakeServo.setPower(intakePower);
+            rightIntakeServo.setPower(intakePower);
+        }
 
         /*
          * Show motor powers on the Driver Station via telemetry.
@@ -282,9 +283,9 @@ public class Primary extends OpMode {
     }
 
     void autoAim(double speed) {
-        while (myAprilTagProcessor.getDetections() == null) {
+        while ((myAprilTagProcessor.getDetections()).isEmpty()) {
             leftDrive.setPower(speed);
-            rightDrive.setPower(0);
+            rightDrive.setPower(-1 * speed);
         }
     }
 
