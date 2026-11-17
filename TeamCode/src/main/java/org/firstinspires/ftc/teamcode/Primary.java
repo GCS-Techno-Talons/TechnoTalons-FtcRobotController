@@ -56,7 +56,8 @@ public class Primary extends OpMode {
     private CRServo leftIntakeServo = null;
     private CRServo rightIntakeServo = null;
     private CRServo windmillServo = null;
-    private AprilTagProcessor myAprilTagProcessor;
+
+    private AprilTagHelper aprilTagHelper = new AprilTagHelper(hardwareMap.get(WebcamName.class, "Logitech C270 Webcam"));
     private final double RIGHT_SIDE_MULTIPLIER = 0.8;
 
 
@@ -90,8 +91,6 @@ public class Primary extends OpMode {
      */
     @Override
     public void init() {
-        AprilTagHelper aprilTagHelper = new AprilTagHelper(hardwareMap.get(WebcamName.class, "Logitech C270 Webcam"));
-
         /*
          * Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
@@ -206,15 +205,16 @@ public class Primary extends OpMode {
         /*
          * Read AprilTag and do something with it
          */
-        List<AprilTagDetection> myAprilTagDetections = myAprilTagProcessor.getDetections();  // list of all detections
-        int myAprilTagIdCode;                           // ID code of current detection, in for() loop
+        List<AprilTagDetection> AprilTagDetections = aprilTagHelper.getTagDetections();  // list of all detections
+        int AprilTagIdCode;                           // ID code of current detection, in for() loop
 
         // Cycle through the list and process each AprilTag.
-        for (AprilTagDetection myAprilTagDetection : myAprilTagDetections) {
+        for (AprilTagDetection AprilTagDetection : AprilTagDetections) {
             // Read the ID of detection
-            myAprilTagIdCode = myAprilTagDetection.id;   // No non-null Metadata check needed for reading only ID code.
+            AprilTagIdCode = AprilTagDetection.id;   // No non-null Metadata check needed for reading only ID code.
 
-            telemetry.addLine("AprilTag ID: " + myAprilTagIdCode);
+            telemetry.addLine("AprilTag ID: " + AprilTagIdCode);
+            telemetry.addLine("Angle: " + aprilTagHelper.getAngle(aprilTagHelper.getDetection(AprilTagIdCode)));
         }
     }
 
@@ -237,7 +237,7 @@ public class Primary extends OpMode {
     }
       // Useless old thing, ignore unless your name is Walker
 //    void autoAim(double speed) {
-//        while ((myAprilTagProcessor.getDetections()).isEmpty()) {
+//        while ((AprilTagProcessor.getDetections()).isEmpty()) {
 //            leftDrive.setPower(speed);
 //            rightDrive.setPower(-1 * speed);
 //        }

@@ -46,8 +46,15 @@ public class AprilTagHelper {
     public AprilTagDetection getDetection(int id) {
         List<AprilTagDetection> detections = getTagDetections();
 
-
-        //for detection in
+        for (AprilTagDetection detection : detections) {
+            if (detection.id == id) {
+                return detection;
+            }
+        }
         return null;
+    }
+
+    public double getAngle(AprilTagDetection detection) {
+        return Math.asin(detection.rawPose.x / detection.rawPose.y);
     }
 }
